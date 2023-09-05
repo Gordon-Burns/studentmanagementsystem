@@ -86,6 +86,7 @@ class InsertDialog(QDialog):
         confirmation = QMessageBox()
         confirmation.setText("Registration Successful")
         confirmation.exec()
+        self.accept()
         student_app.load_data()
 
 
