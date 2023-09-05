@@ -2,7 +2,7 @@ import sys
 import sqlite3
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
     QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-    QVBoxLayout, QComboBox
+    QVBoxLayout, QComboBox, QMessageBox
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import QSize
 
@@ -83,6 +83,9 @@ class InsertDialog(QDialog):
         connection.commit()
         cursor.close()
         connection.close()
+        confirmation = QMessageBox()
+        confirmation.setText("Registration Successful")
+        confirmation.exec()
         student_app.load_data()
 
 
