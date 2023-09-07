@@ -95,6 +95,7 @@ class MainWindow(QMainWindow):
         dialog = AboutDialog()
         dialog.exec()
 
+
 class AboutDialog(QMessageBox):
     def __init__(self):
         super().__init__()
@@ -117,9 +118,9 @@ class DeleteDialog(QDialog):
         yes = QPushButton("Yes")
         no = QPushButton("No")
 
-        layout.addWidget(confirmation,0,0,1,2)
-        layout.addWidget(yes,1,0)
-        layout.addWidget(no,1,1,)
+        layout.addWidget(confirmation, 0, 0, 1, 2)
+        layout.addWidget(yes, 1, 0)
+        layout.addWidget(no, 1, 1, )
         self.setLayout(layout)
 
         yes.clicked.connect(self.delete_student)
@@ -130,7 +131,7 @@ class DeleteDialog(QDialog):
         connection = sqlite3.connect("database.db")
         cursor = connection.cursor()
         cursor.execute("DELETE FROM STUDENTS where id = ? ",
-                       (student_id, ))
+                       (student_id,))
         connection.commit()
         cursor.close()
         connection.close()
@@ -141,8 +142,6 @@ class DeleteDialog(QDialog):
         self.accept()
         # Refresh the table
         student_app.load_data()
-
-
 
 
 class EditDialog(QDialog):
