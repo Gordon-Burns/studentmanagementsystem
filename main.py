@@ -3,8 +3,8 @@ import sqlite3
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
     QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-    QVBoxLayout, QComboBox, QMessageBox
-from PyQt6.QtGui import QAction
+    QVBoxLayout, QComboBox, QMessageBox, QToolBar
+from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import QSize
 
 
@@ -18,14 +18,14 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu("&Help")
         edit_menu_item = self.menuBar().addMenu("&Edit")
 
-        add_student_action = QAction("Add_Student", self)
+        add_student_action = QAction(QIcon("icons/add.png"), "Add_Student", self)
         add_student_action.triggered.connect(self.insert)
         file_menu_item.addAction(add_student_action)
 
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
 
-        search_action = QAction("Search", self)
+        search_action = QAction(QIcon("icons/search.png"), "Search", self)
         search_action.triggered.connect(self.search)
         edit_menu_item.addAction(search_action)
 
@@ -34,6 +34,12 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(("ID", "Name", "Course", "Mobile"))
         self.setCentralWidget(self.table)
         self.table.verticalHeader().setVisible(False)
+        # Create toolbar and add elements
+        toolbar = QToolBar()
+        toolbar.setMovable(True)
+        self.addToolBar(toolbar)
+        toolbar.addAction(add_student_action)
+        toolbar.addAction(search_action)
 
     def load_data(self):
         connection = sqlite3.connect("database.db")
@@ -126,11 +132,9 @@ class SearchDialog(QDialog):
         items = student_app.table.findItems(name, Qt.MatchFlag.MatchFixedString)
         for item in items:
             student_app.table.item(item.row(), 1).setSelected(True)
-            print(item)
         cursor.close()
         connection.close()
         self.accept()
-        
 
 
 app = QApplication(sys.argv)
