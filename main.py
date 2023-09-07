@@ -55,6 +55,12 @@ class MainWindow(QMainWindow):
         delete_button = QPushButton("Delete Record")
         delete_button.clicked.connect(self.delete)
 
+        children = self.findChildren(QPushButton)
+        if children:
+            for child in children:
+                self.statusbar.removeWidget(child)
+
+
         self.statusbar.addWidget(edit_button)
         self.statusbar.addWidget(delete_button)
 
