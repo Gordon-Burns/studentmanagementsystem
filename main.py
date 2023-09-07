@@ -123,13 +123,14 @@ class SearchDialog(QDialog):
         result = cursor.execute("SELECT * FROM STUDENTS "
                                 "WHERE NAME = ?", (name,))
         rows = list(result)
-        items = student_app.table.findItems(name,Qt.MatchFlag.MatchFixedString)
+        items = student_app.table.findItems(name, Qt.MatchFlag.MatchFixedString)
         for item in items:
-            student_app.table.item(item.row(),1).setSelected(True)
-
-            cursor.close()
-            connection.close()
-        self.hide()
+            student_app.table.item(item.row(), 1).setSelected(True)
+            print(item)
+        cursor.close()
+        connection.close()
+        self.accept()
+        
 
 
 app = QApplication(sys.argv)
