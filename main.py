@@ -1,5 +1,6 @@
 import sys
 import sqlite3
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget, QGridLayout, \
     QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
     QVBoxLayout, QComboBox, QMessageBox
@@ -15,7 +16,7 @@ class MainWindow(QMainWindow):
 
         file_menu_item = self.menuBar().addMenu("&File")
         help_menu_item = self.menuBar().addMenu("&Help")
-        search_menu_item = self.menuBar().addMenu("&Search")
+        edit_menu_item = self.menuBar().addMenu("&Edit")
 
         add_student_action = QAction("Add_Student", self)
         add_student_action.triggered.connect(self.insert)
@@ -24,9 +25,9 @@ class MainWindow(QMainWindow):
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
 
-        search = QAction("Search", self)
-        search.triggered.connect(self.search)
-        search_menu_item.addAction(search)
+        search_action = QAction("Search", self)
+        search_action.triggered.connect(self.search)
+        edit_menu_item.addAction(search_action)
 
         self.table = QTableWidget()
         self.table.setColumnCount(4)
@@ -111,9 +112,24 @@ class SearchDialog(QDialog):
         layout.addWidget(self.search_bar)
 
         search_button = QPushButton("Search")
-        # search_button.clicked.connect(self.add_student)
+        search_button.clicked.connect(self.search)
         layout.addWidget(search_button)
         self.setLayout(layout)
+
+    def search(self):
+        name = self.search_bar.text()
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        result = cursor.execute("SELECT * FROM STUDENTS "
+                                "WHERE NAME = ?", (name,))
+        rows = list(result)
+        items = student_app.table.findItems(name,Qt.MatchFlag.MatchFixedString)
+        for item in items:
+            student_app.table.item(item.row(),1).setSelected(True)
+
+            cursor.close()
+            connection.close()
+        self.hide()
 
 
 app = QApplication(sys.argv)
