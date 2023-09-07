@@ -60,7 +60,6 @@ class MainWindow(QMainWindow):
             for child in children:
                 self.statusbar.removeWidget(child)
 
-
         self.statusbar.addWidget(edit_button)
         self.statusbar.addWidget(delete_button)
 
@@ -91,12 +90,64 @@ class MainWindow(QMainWindow):
         dialog = DeleteDialog()
         dialog.exec()
 
+
 class DeleteDialog(QDialog):
     pass
 
 
 class EditDialog(QDialog):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedSize(300, 300)
+
+        index = student_app.table.currentRow()
+        student_name = student_app.table.item(index, 1).text()
+
+        # Get ID for Selected row
+        self.student_id = student_app.table.item(index, 0).text()
+        layout = QVBoxLayout()
+        # add student name widget
+        self.student_name = QLineEdit(student_name)
+
+        layout.addWidget(self.student_name)
+        # add combo box for courses
+
+        course_name = student_app.table.item(index, 2).text()
+        self.course_name = QComboBox()
+        courses = ["Biology", "Math", "Astronomy", "Programming"]
+        self.course_name.addItems(courses)
+        self.course_name.setCurrentText(course_name)
+        layout.addWidget(self.course_name)
+        # add mobile number
+
+        mobile = student_app.table.item(index, 3).text()
+        self.mobile = QLineEdit(mobile)
+        layout.addWidget(self.mobile)
+
+        # Add Submit Button
+        submit = QPushButton("Submit")
+        submit.clicked.connect(self.update_student)
+        layout.addWidget(submit)
+        self.setLayout(layout)
+
+    def update_student(self):
+        name = self.student_name.text()
+        course = self.course_name.itemText(self.course_name.currentIndex())
+        mobile = self.mobile.text()
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("UPDATE STUDENTS SET name = ?, course = ?, mobile = ? where id = ? ",
+                       (name, course, mobile, self.student_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        confirmation = QMessageBox()
+        confirmation.setText("Update Successful")
+        confirmation.exec()
+        self.accept()
+        # Refresh the table
+        student_app.load_data()
 
 
 class InsertDialog(QDialog):
